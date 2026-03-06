@@ -86,6 +86,35 @@ def startup_event():
     
     logger.info("Connecting to ChromaDB...")
     vi = VectorIndex()
+    
+    # If on Vercel (ephemeral DB), and it's empty, we must quickly populate it
+    if os.environ.get("VERCEL") and vi.count() == 0:
+        logger.info("Vercel Ephemeral DB is empty. Populating from local data/chunks/...")
+        try:
+            import json
+            import glob
+            from embeddings.generate import embed_texts
+            
+            chunk_files = glob.glob("data/chunks/*.json")
+            for fpath in chunk_files:
+                with open(fpath, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    
+                chunks = data.get("chunks", [])
+                if not chunks: continue
+                
+                texts = [c["text"] for c in chunks]
+                ids = [c["metadata"]["chunk_id"] for c in chunks]
+                metadatas = [c["metadata"] for c in chunks]
+                
+                # We need the API key to generate vectors on the fly
+                if API_KEY:
+                    logger.info(f"Generating vectors for {len(chunks)} chunks in {fpath}...")
+                    vectors = embed_texts(texts, API_KEY)
+                    vi.add(chunk_ids=ids, texts=texts, embeddings=vectors, metadatas=metadatas)
+        except Exception as e:
+            logger.error(f"Failed to populate ephemeral DB on startup: {e}")
+            
     logger.info(f"Connected. {vi.count()} chunks in database.")
     
     retriever = Retriever(index=vi)

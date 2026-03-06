@@ -39,15 +39,22 @@ class VectorIndex:
     """
 
     def __init__(self, persist_dir: Path = CHROMA_PERSIST_DIR):
-        persist_dir.mkdir(parents=True, exist_ok=True)
-        self.client = chromadb.PersistentClient(path=str(persist_dir))
+        import os
+        if os.environ.get("VERCEL"):
+            # Serverless environments are read-only.
+            logger.info("Vercel environment detected. Initializing Ephemeral (in-memory) ChromaDB.")
+            self.client = chromadb.EphemeralClient()
+        else:
+            persist_dir.mkdir(parents=True, exist_ok=True)
+            self.client = chromadb.PersistentClient(path=str(persist_dir))
+            
         self.collection = self.client.get_or_create_collection(
             name=COLLECTION_NAME,
             metadata={"hnsw:space": "cosine"},   # cosine similarity
         )
         logger.info(
-            "VectorIndex ready — collection '%s' has %d vectors  (persist_dir=%s)",
-            COLLECTION_NAME, self.collection.count(), persist_dir,
+            "VectorIndex ready — collection '%s' has %d vectors",
+            COLLECTION_NAME, self.collection.count()
         )
 
     # ------------------------------------------------------------------
