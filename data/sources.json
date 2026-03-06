@@ -1,74 +1,174 @@
 [
   {
-    "url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-large-cap-fund",
+    "url": "https://groww.in/mutual-funds/mirae-asset-large-cap-fund-direct-growth",
     "scheme_name": "Mirae Asset Large Cap Fund",
     "amc": "Mirae Asset",
-    "page_type": "fact_sheet"
+    "page_type": "fund_detail",
+    "source": "groww",
+    "fields": [
+      "expense_ratio",
+      "exit_load",
+      "sip_minimum",
+      "riskometer",
+      "benchmark",
+      "nav",
+      "aum"
+    ]
   },
   {
-    "url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-elss-tax-saver-fund",
+    "url": "https://groww.in/mutual-funds/mirae-asset-elss-tax-saver-fund-direct-growth",
     "scheme_name": "Mirae Asset ELSS Tax Saver Fund",
     "amc": "Mirae Asset",
-    "page_type": "fact_sheet"
+    "page_type": "fund_detail",
+    "source": "groww",
+    "fields": [
+      "expense_ratio",
+      "exit_load",
+      "sip_minimum",
+      "riskometer",
+      "benchmark",
+      "lock_in"
+    ]
   },
   {
-    "url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-emerging-bluechip-fund",
+    "url": "https://groww.in/mutual-funds/mirae-asset-large-midcap-fund-direct-growth",
     "scheme_name": "Mirae Asset Emerging Bluechip Fund",
     "amc": "Mirae Asset",
-    "page_type": "fact_sheet"
+    "page_type": "fund_detail",
+    "source": "groww",
+    "fields": [
+      "expense_ratio",
+      "exit_load",
+      "sip_minimum",
+      "riskometer",
+      "benchmark"
+    ]
   },
   {
-    "url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-liquid-fund",
+    "url": "https://groww.in/mutual-funds/mirae-asset-cash-management-fund-direct-growth",
     "scheme_name": "Mirae Asset Liquid Fund",
     "amc": "Mirae Asset",
-    "page_type": "fact_sheet"
+    "page_type": "fund_detail",
+    "source": "groww",
+    "fields": [
+      "expense_ratio",
+      "exit_load",
+      "sip_minimum",
+      "riskometer",
+      "benchmark"
+    ]
   },
   {
-    "url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-balanced-advantage-fund",
+    "url": "https://groww.in/mutual-funds/mirae-asset-balanced-advantage-fund-direct-growth",
     "scheme_name": "Mirae Asset Balanced Advantage Fund",
     "amc": "Mirae Asset",
-    "page_type": "fact_sheet"
+    "page_type": "fund_detail",
+    "source": "groww",
+    "fields": [
+      "expense_ratio",
+      "exit_load",
+      "sip_minimum",
+      "riskometer",
+      "benchmark"
+    ]
+  },
+  {
+    "url": "https://groww.in/p/help",
+    "scheme_name": null,
+    "amc": null,
+    "page_type": "help_home",
+    "source": "groww_help",
+    "fields": [
+      "faq_categories"
+    ]
+  },
+  {
+    "url": "https://groww.in/p/learn/mutual-funds",
+    "scheme_name": null,
+    "amc": null,
+    "page_type": "learn",
+    "source": "groww_help",
+    "fields": [
+      "general_mf_concepts"
+    ]
   },
   {
     "url": "https://www.amfiindia.com/investor-corner/knowledge-center/elss.html",
     "scheme_name": null,
     "amc": null,
-    "page_type": "amfi"
+    "page_type": "amfi",
+    "source": "amfi",
+    "fields": [
+      "elss_lock_in",
+      "tax_benefit"
+    ]
   },
   {
     "url": "https://www.amfiindia.com/investor-corner/knowledge-center/riskometer.html",
     "scheme_name": null,
     "amc": null,
-    "page_type": "amfi"
+    "page_type": "amfi",
+    "source": "amfi",
+    "fields": [
+      "riskometer_definitions"
+    ]
   },
   {
     "url": "https://www.amfiindia.com/investor-corner/knowledge-center/faqs-on-mf.html",
     "scheme_name": null,
     "amc": null,
-    "page_type": "amfi"
+    "page_type": "amfi",
+    "source": "amfi",
+    "fields": [
+      "mf_faqs"
+    ]
   },
   {
     "url": "https://www.sebi.gov.in/legal/circulars/sep-2018/circular-on-total-expense-ratio_40302.html",
     "scheme_name": null,
     "amc": null,
-    "page_type": "sebi"
+    "page_type": "sebi",
+    "source": "sebi",
+    "fields": [
+      "expense_ratio_norms"
+    ]
   },
   {
-    "url": "https://groww.in/help/articles/how-to-download-mutual-fund-statement",
-    "scheme_name": null,
-    "amc": null,
-    "page_type": "help"
+    "url": "https://www.miraeassetmf.co.in/mutual-fund-scheme/equity/mirae-asset-large-cap-fund",
+    "scheme_name": "Mirae Asset Large Cap Fund",
+    "amc": "Mirae Asset",
+    "page_type": "amc_fact_sheet",
+    "source": "amc",
+    "fields": [
+      "expense_ratio",
+      "exit_load",
+      "sip_minimum",
+      "riskometer",
+      "benchmark"
+    ]
   },
   {
-    "url": "https://groww.in/help/articles/how-to-download-capital-gains-report",
-    "scheme_name": null,
-    "amc": null,
-    "page_type": "help"
+    "url": "https://www.miraeassetmf.co.in/mutual-fund-scheme/tax-saving/mirae-asset-elss-tax-saver-fund",
+    "scheme_name": "Mirae Asset ELSS Tax Saver Fund",
+    "amc": "Mirae Asset",
+    "page_type": "amc_fact_sheet",
+    "source": "amc",
+    "fields": [
+      "expense_ratio",
+      "exit_load",
+      "lock_in",
+      "riskometer",
+      "benchmark"
+    ]
   },
   {
     "url": "https://www.camsonline.com/Investors/Statements/Consolidated-Account-Statement",
     "scheme_name": null,
     "amc": null,
-    "page_type": "cams"
+    "page_type": "statement",
+    "source": "cams",
+    "fields": [
+      "statement_download"
+    ]
   }
 ]
