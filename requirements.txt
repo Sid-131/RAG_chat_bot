@@ -1,4 +1,4 @@
-# Python dependencies for RAG-based Mutual Fund FAQ Chatbot
+# Minimal dependencies for Vercel Serverless Backend (Total < 500MB)
 
 # --- Backend API ---
 fastapi>=0.100.0
@@ -11,26 +11,13 @@ google-generativeai>=0.7.0
 
 # --- Vector Store ---
 chromadb>=0.5.0
-pysqlite3-binary>=0.5.0  # Required for ChromaDB on Vercel's older Linux instances
+pysqlite3-binary>=0.5.0
 
-# --- Scheduler ---
-apscheduler>=3.10.0
-
-# --- HTTP & Scraping ---
-httpx>=0.27.0
-beautifulsoup4>=4.12.0
-pdfminer.six>=20221105
-playwright>=1.44.0
-
-# --- NLP ---
-spacy>=3.7.0
-
-# --- Data ---
-numpy>=1.26.0
-
-# --- Environment ---
+# --- Environment & Utils ---
 python-dotenv>=1.0.0
 requests>=2.31.0
+numpy>=1.26.0
 
-# --- UI ---
-streamlit>=1.35.0
+# Note: We specifically EXCLUDE playwright, spacy, and streamlit here 
+# because they inflate the Vercel Lambda bundle over the 500MB hard limit.
+# Those heavy packages are only needed locally during the Ingestion/Processing phases.
