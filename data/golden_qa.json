@@ -1,0 +1,272 @@
+[
+    {
+        "id": "q001",
+        "question": "What is the expense ratio of Mirae Asset Large Cap Fund (Regular Plan)?",
+        "expected_answer_fragment": "expense ratio",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-large-cap-fund",
+        "is_advisory": false,
+        "category": "expense_ratio",
+        "scheme": "Mirae Asset Large Cap Fund"
+    },
+    {
+        "id": "q002",
+        "question": "What is the expense ratio of Mirae Asset ELSS Tax Saver Fund?",
+        "expected_answer_fragment": "expense ratio",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-elss-tax-saver-fund",
+        "is_advisory": false,
+        "category": "expense_ratio",
+        "scheme": "Mirae Asset ELSS Tax Saver Fund"
+    },
+    {
+        "id": "q003",
+        "question": "What is the expense ratio of Mirae Asset Liquid Fund?",
+        "expected_answer_fragment": "expense ratio",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-liquid-fund",
+        "is_advisory": false,
+        "category": "expense_ratio",
+        "scheme": "Mirae Asset Liquid Fund"
+    },
+    {
+        "id": "q004",
+        "question": "What is the expense ratio of Mirae Asset Emerging Bluechip Fund?",
+        "expected_answer_fragment": "expense ratio",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-emerging-bluechip-fund",
+        "is_advisory": false,
+        "category": "expense_ratio",
+        "scheme": "Mirae Asset Emerging Bluechip Fund"
+    },
+    {
+        "id": "q005",
+        "question": "What is the TER of Mirae Asset Balanced Advantage Fund?",
+        "expected_answer_fragment": "expense ratio",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-balanced-advantage-fund",
+        "is_advisory": false,
+        "category": "expense_ratio",
+        "scheme": "Mirae Asset Balanced Advantage Fund"
+    },
+    {
+        "id": "q006",
+        "question": "What is the exit load of Mirae Asset Large Cap Fund?",
+        "expected_answer_fragment": "exit load",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-large-cap-fund",
+        "is_advisory": false,
+        "category": "exit_load",
+        "scheme": "Mirae Asset Large Cap Fund"
+    },
+    {
+        "id": "q007",
+        "question": "Does Mirae Asset ELSS Tax Saver Fund have an exit load?",
+        "expected_answer_fragment": "exit load",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-elss-tax-saver-fund",
+        "is_advisory": false,
+        "category": "exit_load",
+        "scheme": "Mirae Asset ELSS Tax Saver Fund"
+    },
+    {
+        "id": "q008",
+        "question": "What is the exit load for Mirae Asset Liquid Fund?",
+        "expected_answer_fragment": "exit load",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-liquid-fund",
+        "is_advisory": false,
+        "category": "exit_load",
+        "scheme": "Mirae Asset Liquid Fund"
+    },
+    {
+        "id": "q009",
+        "question": "What is the exit load of Mirae Asset Emerging Bluechip Fund?",
+        "expected_answer_fragment": "exit load",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-emerging-bluechip-fund",
+        "is_advisory": false,
+        "category": "exit_load",
+        "scheme": "Mirae Asset Emerging Bluechip Fund"
+    },
+    {
+        "id": "q010",
+        "question": "What is the exit load policy for Mirae Asset Balanced Advantage Fund?",
+        "expected_answer_fragment": "exit load",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-balanced-advantage-fund",
+        "is_advisory": false,
+        "category": "exit_load",
+        "scheme": "Mirae Asset Balanced Advantage Fund"
+    },
+    {
+        "id": "q011",
+        "question": "What is the minimum SIP amount for Mirae Asset Large Cap Fund?",
+        "expected_answer_fragment": "SIP",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-large-cap-fund",
+        "is_advisory": false,
+        "category": "sip_minimum",
+        "scheme": "Mirae Asset Large Cap Fund"
+    },
+    {
+        "id": "q012",
+        "question": "What is the minimum monthly SIP for Mirae Asset Liquid Fund?",
+        "expected_answer_fragment": "SIP",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-liquid-fund",
+        "is_advisory": false,
+        "category": "sip_minimum",
+        "scheme": "Mirae Asset Liquid Fund"
+    },
+    {
+        "id": "q013",
+        "question": "How much is the minimum lump sum investment in Mirae Asset ELSS Fund?",
+        "expected_answer_fragment": "minimum",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-elss-tax-saver-fund",
+        "is_advisory": false,
+        "category": "sip_minimum",
+        "scheme": "Mirae Asset ELSS Tax Saver Fund"
+    },
+    {
+        "id": "q014",
+        "question": "What is the minimum SIP installment for Mirae Asset Emerging Bluechip Fund?",
+        "expected_answer_fragment": "SIP",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-emerging-bluechip-fund",
+        "is_advisory": false,
+        "category": "sip_minimum",
+        "scheme": "Mirae Asset Emerging Bluechip Fund"
+    },
+    {
+        "id": "q015",
+        "question": "What is the minimum additional investment amount in Mirae Asset Balanced Advantage Fund?",
+        "expected_answer_fragment": "minimum",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-balanced-advantage-fund",
+        "is_advisory": false,
+        "category": "sip_minimum",
+        "scheme": "Mirae Asset Balanced Advantage Fund"
+    },
+    {
+        "id": "q016",
+        "question": "What is the lock-in period for ELSS mutual funds?",
+        "expected_answer_fragment": "3 years",
+        "expected_source_url": "https://www.amfiindia.com/investor-corner/knowledge-center/elss.html",
+        "is_advisory": false,
+        "category": "elss_lockin",
+        "scheme": null
+    },
+    {
+        "id": "q017",
+        "question": "Can I redeem Mirae Asset ELSS Tax Saver Fund before 3 years?",
+        "expected_answer_fragment": "lock-in",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-elss-tax-saver-fund",
+        "is_advisory": false,
+        "category": "elss_lockin",
+        "scheme": "Mirae Asset ELSS Tax Saver Fund"
+    },
+    {
+        "id": "q018",
+        "question": "What is the statutory lock-in period for ELSS under Section 80C?",
+        "expected_answer_fragment": "80C",
+        "expected_source_url": "https://www.amfiindia.com/investor-corner/knowledge-center/elss.html",
+        "is_advisory": false,
+        "category": "elss_lockin",
+        "scheme": null
+    },
+    {
+        "id": "q019",
+        "question": "What is the riskometer level of Mirae Asset Large Cap Fund?",
+        "expected_answer_fragment": "riskometer",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-large-cap-fund",
+        "is_advisory": false,
+        "category": "riskometer",
+        "scheme": "Mirae Asset Large Cap Fund"
+    },
+    {
+        "id": "q020",
+        "question": "What is the risk level of Mirae Asset Liquid Fund?",
+        "expected_answer_fragment": "riskometer",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-liquid-fund",
+        "is_advisory": false,
+        "category": "riskometer",
+        "scheme": "Mirae Asset Liquid Fund"
+    },
+    {
+        "id": "q021",
+        "question": "What is the riskometer of Mirae Asset Emerging Bluechip Fund?",
+        "expected_answer_fragment": "risk",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-emerging-bluechip-fund",
+        "is_advisory": false,
+        "category": "riskometer",
+        "scheme": "Mirae Asset Emerging Bluechip Fund"
+    },
+    {
+        "id": "q022",
+        "question": "What benchmark index does Mirae Asset Large Cap Fund track?",
+        "expected_answer_fragment": "benchmark",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-large-cap-fund",
+        "is_advisory": false,
+        "category": "benchmark",
+        "scheme": "Mirae Asset Large Cap Fund"
+    },
+    {
+        "id": "q023",
+        "question": "Which index does Mirae Asset Liquid Fund benchmark against?",
+        "expected_answer_fragment": "benchmark",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-liquid-fund",
+        "is_advisory": false,
+        "category": "benchmark",
+        "scheme": "Mirae Asset Liquid Fund"
+    },
+    {
+        "id": "q024",
+        "question": "How can I download my mutual fund statement from Groww?",
+        "expected_answer_fragment": "statement",
+        "expected_source_url": "https://groww.in/help/articles/how-to-download-mutual-fund-statement",
+        "is_advisory": false,
+        "category": "statement_download",
+        "scheme": null
+    },
+    {
+        "id": "q025",
+        "question": "How do I get my capital gains report on Groww?",
+        "expected_answer_fragment": "capital gains",
+        "expected_source_url": "https://groww.in/help/articles/how-to-download-capital-gains-report",
+        "is_advisory": false,
+        "category": "statement_download",
+        "scheme": null
+    },
+    {
+        "id": "q026",
+        "question": "Where can I download a consolidated account statement for my mutual funds?",
+        "expected_answer_fragment": "CAMS",
+        "expected_source_url": "https://www.camsonline.com/Investors/Statements/Consolidated-Account-Statement",
+        "is_advisory": false,
+        "category": "statement_download",
+        "scheme": null
+    },
+    {
+        "id": "q027",
+        "question": "How do I download my mutual fund statement from Groww for tax filing?",
+        "expected_answer_fragment": "statement",
+        "expected_source_url": "https://groww.in/help/articles/how-to-download-mutual-fund-statement",
+        "is_advisory": false,
+        "category": "statement_download",
+        "scheme": null
+    },
+    {
+        "id": "q028",
+        "question": "What is the benchmark index for Mirae Asset ELSS Tax Saver Fund?",
+        "expected_answer_fragment": "benchmark",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-elss-tax-saver-fund",
+        "is_advisory": false,
+        "category": "benchmark",
+        "scheme": "Mirae Asset ELSS Tax Saver Fund"
+    },
+    {
+        "id": "q029",
+        "question": "What is the riskometer of Mirae Asset Balanced Advantage Fund?",
+        "expected_answer_fragment": "risk",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-balanced-advantage-fund",
+        "is_advisory": false,
+        "category": "riskometer",
+        "scheme": "Mirae Asset Balanced Advantage Fund"
+    },
+    {
+        "id": "q030",
+        "question": "What is the lock-in period applicable to each SIP instalment in Mirae Asset ELSS Fund?",
+        "expected_answer_fragment": "3 years",
+        "expected_source_url": "https://www.miraeassetmf.co.in/schemes/mirae-asset-elss-tax-saver-fund",
+        "is_advisory": false,
+        "category": "elss_lockin",
+        "scheme": "Mirae Asset ELSS Tax Saver Fund"
+    }
+]
