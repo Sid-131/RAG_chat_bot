@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stratify AI Workspace</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --bg-body: #f6f8fb;
+            --bg-sidebar: #ffffff;
+            --text-main: #2d3748;
+            --text-sub: #718096;
+            --text-light: #a0aec0;
+            --accent: #4299e1;
+            --border-color: #edf2f7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-main);
+        }
+
+        /* Sidebar Custom CSS */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            padding: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .sidebar-profile {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1rem 2rem 1rem;
+        }
+        .sidebar-profile img {
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            margin-right: 12px;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            color: #4a5568;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 8px 16px;
+            margin: 0 8px 4px 8px;
+            border-radius: 12px;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .sidebar-item i {
+            width: 24px;
+            color: var(--text-light);
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: #f7fafc;
+            color: #1a202c;
+            font-weight: 600;
+        }
+        .sidebar-item.active i {
+            color: #1a202c;
+        }
+        .sidebar-section {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            padding-left: 16px;
+        }
+        .sidebar-subitem {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #4a5568;
+            padding: 6px 16px 6px 24px;
+            cursor: pointer;
+        }
+        .upgrade-box {
+            margin: auto 16px 1rem 16px;
+            padding: 1rem;
+            background-color: #f7fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
+        .upgrade-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 12px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            align-items: center;
+        }
+
+        .content-wrapper {
+            width: 100%;
+            max-width: 900px;
+            padding: 3rem 2rem 100px 2rem;
+            overflow-y: auto;
+            flex-grow: 1;
+            scroll-behavior: smooth;
+        }
+
+        /* Dashboard Typography */
+        .greeting-title {
+            font-size: 2.8rem;
+            font-weight: 500;
+            background: linear-gradient(90deg, #4299e1 0%, #4fd1c5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0px;
+            display: inline-block;
+        }
+        .greeting-subtitle {
+            font-size: 2.4rem;
+            font-weight: 500;
+            color: var(--text-sub);
+            margin-top: -5px;
+            margin-bottom: 2.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        /* Dashboard Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .dash-card {
+            background-color: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid white;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.01);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .dash-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            border-color: #f7fafc;
+        }
+        .card-title {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .file-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .file-icon {
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        /* Tasks Header */
+        .tasks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .task-list {
+            background: white;
+            border-radius: 16px;
+            padding: 0.5rem 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+        }
+        .task-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border-color);
+            font-size: 0.9rem;
+        }
+        .task-row:last-child {
+            border-bottom: none;
+        }
+        .task-badge {
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        /* Chat History View */
+        .chat-container {
+            display: none; /* hidden by default */
+            flex-direction: column;
+            gap: 1.5rem;
+            padding-bottom: 2rem;
+        }
+        .chat-header {
+            color: var(--text-main);
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .chat-message {
+            display: flex;
+            gap: 16px;
+            max-width: 100%;
+        }
+        .chat-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .chat-avatar.user { background: var(--accent); color: white; }
+        .chat-avatar.bot { background: linear-gradient(135deg, #a0aec0, #718096); color: white; }
+        
+        .chat-bubble {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0 16px 16px 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #2d3748;
+            flex-grow: 1;
+            /* Support Markdown styles */
+        }
+        .chat-bubble.user-bubble {
+            background: #f7fafc;
+            border: 1px solid var(--border-color);
+        }
+        .chat-bubble a { color: var(--accent); text-decoration: none; }
+        .chat-bubble a:hover { text-decoration: underline; }
+        
+        /* Markdown rendering fixes */
+        .chat-bubble p { margin-bottom: 0.5rem; }
+        .chat-bubble p:last-child { margin-bottom: 0; }
+        .chat-bubble ul, .chat-bubble ol { margin-left: 1.5rem; margin-bottom: 0.5rem; }
+
+        /* Loader */
+        .dot-flashing {
+            position: relative;
+            width: 8px;
+            height: 8px;
+            border-radius: 5px;
+            background-color: #cbd5e0;
+            color: #cbd5e0;
+            animation: dot-flashing 1s infinite linear alternate;
+            animation-delay: 0.5s;
+            margin-left: 15px;
+            margin-top: 10px;
+        }
+        .dot-flashing::before, .dot-flashing::after {
+            content: "";
+            display: inline-block;
+            position: absolute;
+            top: 0;
+            width: 8px;
+            height: 8px;
+            border-radius: 5px;
+            background-color: #cbd5e0;
+            color: #cbd5e0;
+            animation: dot-flashing 1s infinite alternate;
+        }
+        .dot-flashing::before { left: -15px; animation-delay: 0s; }
+        .dot-flashing::after { left: 15px; animation-delay: 1s; }
+        @keyframes dot-flashing {
+            0% { background-color: #cbd5e0; }
+            50%, 100% { background-color: rgba(203, 213, 224, 0.2); }
+        }
+
+        /* Sticky Bottom Input */
+        .input-container {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            min-width: 400px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05), 0 4px 6px rgba(0,0,0,0.02);
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+        }
+        .input-container input {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            padding: 10px;
+            font-size: 1rem;
+            color: var(--text-main);
+        }
+        .input-container input::placeholder {
+            color: #a0aec0;
+        }
+        .send-btn {
+            background: var(--bg-body);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .send-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-profile">
+            <img src="https://i.pravatar.cc/150?img=11" alt="Sam">
+            <span style="font-weight: 600; font-size: 0.95rem;">Sam Smith</span>
+        </div>
+        
+        <div class="sidebar-item active">
+            <i class="fa-solid fa-house"></i> Home
+        </div>
+        <div class="sidebar-item" onclick="resetChat()">
+            <i class="fa-regular fa-comment"></i> New Chat
+        </div>
+        <div class="sidebar-item"><i class="fa-solid fa-list-check"></i> My Tasks</div>
+        <div class="sidebar-item"><i class="fa-solid fa-video"></i> My Meetings</div>
+        <div class="sidebar-item"><i class="fa-regular fa-bookmark"></i> Saved Files</div>
+        <div class="sidebar-item"><i class="fa-solid fa-share-nodes"></i> Shared with me</div>
+        
+        <div class="sidebar-section">Today</div>
+        <div class="sidebar-subitem">Research Assistance Request</div>
+        <div class="sidebar-subitem">Summarizing Last Meeting</div>
+        <div class="sidebar-subitem">Prioritizing Tasks Request</div>
+        
+        <div class="sidebar-section">Yesterday</div>
+        <div class="sidebar-subitem">Document Summary Request</div>
+        
+        <div class="upgrade-box">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-circle-notch" style="color:#a0aec0;"></i>
+                <span style="font-size:0.8rem; font-weight:600;">Only 5 AI reports left</span>
+            </div>
+            <div style="font-size:0.75rem; color:#718096; margin-top:4px;">Get deeper insights with Pro</div>
+            <button class="upgrade-btn">Upgrade Now</button>
+        </div>
+        
+        <div class="sidebar-item" style="margin-top: 1rem;"><i class="fa-solid fa-gear"></i> Settings</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-wrapper" id="contentWrapper">
+            
+            <!-- Dashboard View -->
+            <div id="dashboardView">
+                <div class="greeting-title">Welcome, Sam! <span style="font-size: 2.2rem; -webkit-text-fill-color: initial;">👋</span></div>
+                <div class="greeting-subtitle">How can I help you regarding Mutual Funds?</div>
+
+                <div class="grid-2">
+                    <div class="dash-card">
+                        <div class="card-title"><i class="fa-regular fa-clock"></i> Previously viewed files</div>
+                        <div class="file-item">
+                            <div class="file-icon" style="background:#fce000; width:22px; height:22px; font-size:10px;">M</div>
+                            ABSL Frontline Equity Factsheet
+                        </div>
+                        <div class="file-item">
+                            <div class="file-icon" style="background:#f24e1e; width:22px; height:22px; color:white; font-size:10px;">F</div>
+                            Groww - Sip Calculator
+                        </div>
+                        <div class="file-item" style="margin-bottom:0;">
+                            <div class="file-icon" style="background:#f56565; width:22px; height:22px; color:white; font-size:8px;">PDF</div>
+                            SEBI Circulation 2024.pdf
+                        </div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="card-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Summarize your last meeting</div>
+                        <div style="display:flex; align-items:center; margin-top:20px;">
+                            <img src="https://i.pravatar.cc/150?img=5" style="width:44px; height:44px; border-radius:50%; margin-right:16px;">
+                            <div>
+                                <div style="font-weight:600; display:flex; align-items:center; gap:8px;">
+                                    <span style="background:#48bb78; border-radius:4px; padding: 2px 6px; display:inline-flex; align-items:center; color:white; font-size:10px;"><i class="fa-solid fa-video"></i></span>
+                                    Financial Advisor Meet up
+                                </div>
+                                <div style="font-size:0.75rem; color:var(--text-light); margin-top:4px;">1 Apr, 2025, 14:00 pm</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="dash-card" style="padding: 1.2rem 1.5rem;" onclick="prefillSearch('What is the ER of Parag Parikh Flexi Cap Fund?')">
+                        <div class="card-title" style="margin-bottom:0.5rem;"><i class="fa-regular fa-lightbulb"></i> Suggested Query</div>
+                        <div style="font-weight:600; font-size:1.1rem;">What is the ER of Parag Parikh Flexi Cap Fund?</div>
+                    </div>
+                    <div class="dash-card" style="padding: 1.2rem 1.5rem;" onclick="prefillSearch('How is Axis Small Cap riskier than Bluechip?')">
+                        <div class="card-title" style="margin-bottom:0.5rem;"><i class="fa-regular fa-lightbulb"></i> Suggested Query</div>
+                        <div style="font-weight:600; font-size:1.1rem;">How is Axis Small Cap riskier than Bluechip?</div>
+                    </div>
+                </div>
+
+                <div class="tasks-header">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <i class="fa-regular fa-folder" style="font-size:1.2rem;"></i>
+                        <span style="font-weight: 600; font-size: 1.2rem;">My Tasks</span>
+                        <span style="font-size: 0.85rem; color: var(--text-light); font-weight:600; background:#edf2f7; padding:2px 8px; border-radius:12px;">1/3</span>
+                    </div>
+                    <button style="border:1px solid #d6bcfa; background:white; padding:8px 16px; border-radius:20px; color:#805ad5; font-size:0.9rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Prioritize Tasks
+                    </button>
+                </div>
+                
+                <div class="task-list">
+                    <div class="task-row">
+                        <span style="color:#e53e3e; margin-right:12px; font-size:12px;"><i class="fa-solid fa-square"></i></span>
+                        <span style="flex-grow:1; font-weight:600;">Portfolio Review Meeting</span>
+                        <span style="color:var(--text-sub); font-size:0.85rem; margin-right:16px;">2 pm</span>
+                        <span class="task-badge" style="background:#ebf4ff; color:#3182ce;"><i class="fa-solid fa-video" style="margin-right:4px;"></i> Join now</span>
+                    </div>
+                    <div class="task-row">
+                        <span style="color:#3182ce; margin-right:12px; font-size:12px;"><i class="fa-solid fa-square"></i></span>
+                        <span style="flex-grow:1; font-weight:600;">Check expense ratios for ELSS funds</span>
+                        <span class="task-badge" style="background:#fff5f5; color:#e53e3e;">Urgent</span>
+                        <span class="task-badge" style="background:#fff5f5; color:#e53e3e; border:1px solid #fed7d7;">By today</span>
+                    </div>
+                    <div class="task-row">
+                        <span style="color:#3182ce; margin-right:12px; font-size:12px;"><i class="fa-solid fa-square"></i></span>
+                        <span style="flex-grow:1; font-weight:600;">Automate SIP tracking sheet</span>
+                        <span class="task-badge" style="background:#ebf8ff; color:#3182ce;"><i class="fa-regular fa-clock" style="margin-right:4px;"></i> In progress</span>
+                        <span class="task-badge" style="background:#e6fffa; color:#319795;"><i class="fa-regular fa-calendar" style="margin-right:4px;"></i> By tomorrow</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat View -->
+            <div id="chatView" class="chat-container">
+                <div class="chat-header">Workspace Chat</div>
+                <hr style="opacity: 0.2; margin-bottom: 10px;">
+                <div id="chatMessages"></div>
+                <!-- Loading indicator -->
+                <div id="chatLoader" style="display: none; padding-bottom: 20px;">
+                    <div class="chat-message">
+                        <div class="chat-avatar bot"><i class="fa-solid fa-robot"></i></div>
+                        <div class="dot-flashing"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sticky Input -->
+        <div class="input-container">
+            <span style="color:var(--text-light); margin-right: 8px;">✨</span>
+            <input type="text" id="chatInput" placeholder="Ask about mutual funds or search for anything..." autocomplete="off">
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const dashboardView = document.getElementById('dashboardView');
+        const chatView = document.getElementById('chatView');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatLoader = document.getElementById('chatLoader');
+        const contentWrapper = document.getElementById('contentWrapper');
+
+        let isFirstMessage = true;
+
+        chatInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function prefillSearch(text) {
+            chatInput.value = text;
+            sendMessage();
+        }
+
+        function resetChat() {
+            dashboardView.style.display = 'block';
+            chatView.style.display = 'none';
+            chatMessages.innerHTML = '';
+            isFirstMessage = true;
+        }
+
+        async function sendMessage() {
+            const query = chatInput.value.trim();
+            if (!query) return;
+
+            // Clear input
+            chatInput.value = '';
+
+            // Switch to chat view
+            if (isFirstMessage) {
+                dashboardView.style.display = 'none';
+                chatView.style.display = 'flex';
+                isFirstMessage = false;
+            }
+
+            // Append User Message
+            appendMessage('user', query);
+            
+            // Show Loader
+            chatLoader.style.display = 'block';
+            scrollToBottom();
+
+            try {
+                // Call FastAPI backend deployed on Vercel
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await response.json();
+
+                // Hide Loader
+                chatLoader.style.display = 'none';
+
+                if (response.ok) {
+                    appendMessage('bot', data.answer);
+                } else {
+                    appendMessage('bot', `⚠️ Backend Error: ${data.detail || JSON.stringify(data)}`);
+                }
+
+            } catch (error) {
+                chatLoader.style.display = 'none';
+                appendMessage('bot', `⚠️ Network Error: Could not reach the API. Check connection.`);
+            }
+        }
+
+        function appendMessage(role, text) {
+            const div = document.createElement('div');
+            div.className = 'chat-message';
+            
+            let avatarHtml = '';
+            let contentClass = 'chat-bubble';
+
+            if (role === 'user') {
+                avatarHtml = `<div class="chat-avatar user">S</div>`;
+                contentClass += ' user-bubble';
+                // Direct render for user text
+                div.innerHTML = `
+                    ${avatarHtml}
+                    <div class="${contentClass}">${text}</div>
+                `;
+            } else {
+                avatarHtml = `<div class="chat-avatar bot"><i class="fa-solid fa-robot"></i></div>`;
+                // Use marked.js for bot to format Markdown (bold, lists, code, etc)
+                const parsedText = marked.parse(text);
+                div.innerHTML = `
+                    ${avatarHtml}
+                    <div class="${contentClass}">${parsedText}</div>
+                `;
+            }
+
+            chatMessages.appendChild(div);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            contentWrapper.scrollTop = contentWrapper.scrollHeight;
+        }
+    </script>
+</body>
+</html>

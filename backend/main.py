@@ -53,11 +53,18 @@ API_KEY = os.environ.get("GEMINI_API_KEY")
 retriever = None
 generator = None
 
+from fastapi.responses import HTMLResponse
+
 app = FastAPI(title="Mutual Fund FAQ Backend")
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def read_root():
-    return {"status": "Vercel FastAPI Backend is running properly!"}
+    import os
+    html_path = os.path.join(os.getcwd(), "ui", "index.html")
+    if os.path.exists(html_path):
+        with open(html_path, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse(content="<h1>UI currently building... please refresh.</h1>")
 
 # ---------------------------------------------------------------------------
 # Pydantic Schemas
