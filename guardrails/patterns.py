@@ -13,9 +13,11 @@ import re
 ADVISORY_PATTERNS = [
     r"should i invest",
     r"which fund is best",
+    r"which .+ fund is best",      # e.g. 'which mutual fund is best for me?'
     r"recommend",
     r"better fund",
     r"compare funds",
+    r"compare .+(?:and|vs\.?|versus|or)",  # e.g. 'compare Mirae Asset and HDFC'
     r"which is better",
     r"where should i put my money",
     r"top performing",

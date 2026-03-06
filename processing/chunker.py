@@ -35,8 +35,32 @@ class Chunker:
         Returns a list of chunk dicts:
           { 'text': str, 'chunk_index': int, 'total_chunks': int }
         """
-        raise NotImplementedError
+        sentences = self._sentence_tokenize(text)
+        chunks: List[str] = []
+        current_tokens: List[str] = []
+
+        for sentence in sentences:
+            sent_tokens = sentence.split()
+            # If adding this sentence would exceed the chunk size, flush
+            if len(current_tokens) + len(sent_tokens) > CHUNK_SIZE_TOKENS and current_tokens:
+                chunk_text = " ".join(current_tokens)
+                if len(current_tokens) >= MIN_CHUNK_TOKENS:
+                    chunks.append(chunk_text)
+                # Keep overlap: retain last OVERLAP_TOKENS tokens
+                current_tokens = current_tokens[-OVERLAP_TOKENS:]
+            current_tokens.extend(sent_tokens)
+
+        # Flush the last chunk
+        if len(current_tokens) >= MIN_CHUNK_TOKENS:
+            chunks.append(" ".join(current_tokens))
+
+        total = len(chunks)
+        return [
+            {"text": c, "chunk_index": i, "total_chunks": total}
+            for i, c in enumerate(chunks)
+        ]
 
     def _sentence_tokenize(self, text: str) -> List[str]:
         """Use spaCy to split text into sentences."""
-        raise NotImplementedError
+        doc = nlp(text)
+        return [sent.text.strip() for sent in doc.sents if sent.text.strip()]

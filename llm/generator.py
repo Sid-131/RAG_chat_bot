@@ -3,31 +3,59 @@ generator.py
 ------------
 Calls the Gemini LLM API to generate a factual answer given a prompt.
 
-Model:       gemini-1.5-flash  (upgrade to gemini-1.5-pro if quality is insufficient)
-Temperature: 0.0               (deterministic — maximises factual accuracy)
-Max tokens:  256               (enforces concise 3-sentence answers)
+SDK:         google.genai
+Model:       gemini-1.5-flash
+Temperature: 0.0               (deterministic — maximises factual accuracy and grounding)
+Max tokens:  256               (enforces concise answers)
 """
 
-import google.generativeai as genai
-from config.settings import GEMINI_API_KEY
+import os
+import logging
+from google import genai
+from google.genai import types as genai_types
 
-MODEL_NAME = "gemini-1.5-flash"
+logger = logging.getLogger(__name__)
 
+MODEL_NAME = "gemini-2.5-flash"
 
-# ---------------------------------------------------------------------------
-# TODO: Implement Gemini answer generator
-# ---------------------------------------------------------------------------
 
 class AnswerGenerator:
-    """Generates answers using the Gemini LLM API."""
+    """Generates answers using the Gemini LLM API (google.genai SDK)."""
 
-    def __init__(self):
-        genai.configure(api_key=GEMINI_API_KEY)
-        self.model = genai.GenerativeModel(MODEL_NAME)
+    def __init__(self, api_key: str = None):
+        if not api_key:
+            api_key = os.environ.get("GEMINI_API_KEY")
+            if not api_key:
+                raise ValueError("GEMINI_API_KEY must be provided or set in environment.")
+                
+        self._client = genai.Client(api_key=api_key)
+        logger.info("AnswerGenerator initialised with model %s", MODEL_NAME)
 
     def generate(self, prompt: str) -> str:
         """
-        Send the prompt to Gemini and return the response text.
-        Uses temperature=0.0 and max_output_tokens=256.
+        Send the full prompt to Gemini and return the generated text.
+        Configured for RAG: low temperature to reduce hallucination.
+
+        Args:
+            prompt: The full assembled prompt string.
+
+        Returns:
+            The generated answer string.
         """
-        raise NotImplementedError
+        logger.debug("Calling Gemini API...")
+        
+        # Configure model behavior for factual RAG
+        config = genai_types.GenerateContentConfig(
+            temperature=0.0,
+            max_output_tokens=256,
+        )
+
+        response = self._client.models.generate_content(
+            model=MODEL_NAME,
+            contents=prompt,
+            config=config,
+        )
+
+        answer = response.text
+        logger.info("Generated answer (%d chars)", len(answer))
+        return answer

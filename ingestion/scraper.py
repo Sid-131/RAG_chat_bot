@@ -1,116 +1,216 @@
 """
 scraper.py
 ----------
-Async scraper that handles both:
-  - JavaScript-rendered pages (Groww fund pages — React/Next.js)
-    → Uses Playwright (headless Chromium) to wait for dynamic content
-  - Static HTML pages (AMC websites, AMFI, SEBI)
-    → Uses httpx for fast, lightweight fetching
+Async scraper supporting two fetch modes:
 
-Groww pages (groww.in) require Playwright because:
-  - NAV, Expense Ratio, Exit Load, Riskometer are injected via React after load
-  - Simple httpx/BeautifulSoup will return skeleton HTML with empty data fields
+  Static pages (AMC, AMFI, SEBI, CAMS):
+    → Uses `requests` + `BeautifulSoup` (simple, no JS needed)
 
-Strategy per source type:
-  - source == "groww"      → Playwright (wait for selector '.data1Fundv2' or similar)
-  - source == "groww_help" → Playwright
-  - source == "amc"        → httpx (Mirae Asset site is mostly static)
-  - source == "amfi"       → httpx
-  - source == "sebi"       → httpx
-  - source == "cams"       → httpx
+  JavaScript-rendered pages (Groww fund detail / help pages):
+    → Uses `playwright` headless Chromium to wait for React hydration
 
-Rate limiting: 1 req/sec per domain, random jitter 0.5–1.5s
-Retry:         Exponential backoff, max 3 retries on 5xx / timeout
-robots.txt:    Checked before adding any domain to sources.json
+Rate limiting : 1–2 sec random jitter between requests (per domain)
+Retry         : exponential backoff, max 3 retries on 5xx / timeout
+robots.txt    : compliance checked before first request to each domain
 """
 
 import asyncio
+import hashlib
 import random
 import time
+import logging
 from pathlib import Path
 from typing import Optional
-import httpx
-from playwright.async_api import async_playwright, Browser, Page
+from urllib.parse import urlparse
 from urllib.robotparser import RobotFileParser
 
-# Domains that require JS rendering
+import httpx
+from playwright.async_api import async_playwright, Browser
+
+logger = logging.getLogger(__name__)
+
+# Domains that serve data via JavaScript and need Playwright
 JS_RENDERED_DOMAINS = {"groww.in", "www.groww.in"}
 
-# Playwright wait strategy for Groww fund pages
-GROWW_FUND_WAIT_SELECTOR = "div[class*='fnd0MobileNameText'], div[class*='expenseRatio'], .fundDetailCard"
-GROWW_WAIT_TIMEOUT_MS = 10_000  # 10 seconds
+# Playwright: selector to wait for before extracting HTML on Groww pages
+GROWW_WAIT_SELECTOR = "main, article, .fundDetailCard, .kycContainer"
+GROWW_WAIT_TIMEOUT_MS = 15_000  # 15 seconds max
 
-# HTTP timeouts for static pages
-HTTP_TIMEOUT_SECONDS = 15
-MAX_RETRIES = 3
+HTTP_TIMEOUT = 20          # seconds
+MAX_RETRIES  = 3
+RATE_LIMIT   = 1.0         # minimum seconds between requests to the same domain
+JITTER       = (0.5, 1.5)  # extra random wait added to RATE_LIMIT
 
+# Cache of robots.txt per domain  (domain → RobotFileParser)
+_robots_cache: dict[str, RobotFileParser] = {}
 
-# ---------------------------------------------------------------------------
-# TODO: Implement scraper (Playwright branch + httpx branch)
-# ---------------------------------------------------------------------------
 
 class Scraper:
     """
-    Unified async scraper.
-    Uses Playwright for JS-rendered pages (Groww), httpx for static pages.
+    Async context-manager scraper.
+
+    Usage:
+        async with Scraper() as s:
+            html = await s.fetch(url, source_type="amc")
     """
 
-    def __init__(self, rate_limit: float = 1.0):
-        self.rate_limit = rate_limit
-        self._domain_last_request: dict[str, float] = {}
+    def __init__(self):
+        self._domain_last_req: dict[str, float] = {}
         self._browser: Optional[Browser] = None
+        self._playwright = None
+
+    # ------------------------------------------------------------------
+    # Context manager
+    # ------------------------------------------------------------------
 
     async def __aenter__(self):
         self._playwright = await async_playwright().start()
         self._browser = await self._playwright.chromium.launch(headless=True)
+        logger.info("Playwright browser started")
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *_):
         if self._browser:
             await self._browser.close()
-        await self._playwright.stop()
+        if self._playwright:
+            await self._playwright.stop()
+        logger.info("Playwright browser closed")
+
+    # ------------------------------------------------------------------
+    # Public API
+    # ------------------------------------------------------------------
 
     async def fetch(self, url: str, source_type: str = "static") -> Optional[str]:
         """
-        Fetch page content as a string.
+        Fetch a page and return its raw HTML (or None on failure).
 
         Args:
-            url:         Target URL
-            source_type: One of 'groww', 'groww_help', 'amc', 'amfi', 'sebi', 'cams'
+            url:         Target URL.
+            source_type: One of 'groww', 'groww_help', 'amc', 'amfi', 'sebi', 'cams'.
 
         Returns:
-            Page HTML string or None on failure.
+            Raw HTML string, or None if the page could not be fetched.
         """
-        domain = self._domain(url)
+        domain = _domain(url)
+
+        if not self._is_allowed(url):
+            logger.warning("robots.txt disallows scraping: %s", url)
+            return None
+
         await self._throttle(domain)
 
         if source_type in ("groww", "groww_help"):
             return await self._fetch_playwright(url)
-        else:
-            return await self._fetch_httpx(url)
+        return await self._fetch_httpx(url)
+
+    # ------------------------------------------------------------------
+    # Internal fetch methods
+    # ------------------------------------------------------------------
 
     async def _fetch_playwright(self, url: str) -> Optional[str]:
-        """Use Playwright headless browser to render JS-heavy pages."""
-        raise NotImplementedError
+        """Headless Chromium fetch for JS-rendered pages (Groww)."""
+        if not self._browser:
+            raise RuntimeError("Scraper must be used as an async context manager")
+        page = await self._browser.new_page()
+        try:
+            await page.goto(url, wait_until="domcontentloaded", timeout=GROWW_WAIT_TIMEOUT_MS)
+            # Try waiting for a meaningful element; ignore timeout gracefully
+            try:
+                await page.wait_for_selector(GROWW_WAIT_SELECTOR, timeout=GROWW_WAIT_TIMEOUT_MS)
+            except Exception:
+                logger.warning("Selector not found within timeout on %s — using whatever rendered", url)
+            html = await page.content()
+            logger.info("Playwright fetched: %s (%d bytes)", url, len(html))
+            return html
+        except Exception as exc:
+            logger.error("Playwright error on %s: %s", url, exc)
+            return None
+        finally:
+            await page.close()
 
     async def _fetch_httpx(self, url: str) -> Optional[str]:
-        """Use httpx for lightweight static page fetching with retry."""
-        raise NotImplementedError
+        """Lightweight async HTTP fetch with retry for static pages."""
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (compatible; MFBot/1.0; "
+                "+https://github.com/your-org/mf-faq-chatbot)"
+            )
+        }
+        for attempt in range(1, MAX_RETRIES + 1):
+            try:
+                async with httpx.AsyncClient(
+                    timeout=HTTP_TIMEOUT,
+                    follow_redirects=True,
+                    headers=headers,
+                ) as client:
+                    resp = await client.get(url)
+                    if resp.status_code == 200:
+                        logger.info("httpx fetched: %s (%d bytes)", url, len(resp.text))
+                        return resp.text
+                    elif resp.status_code in (429, 500, 502, 503, 504):
+                        wait = 2 ** attempt
+                        logger.warning(
+                            "HTTP %d on %s — retry %d/%d in %ds",
+                            resp.status_code, url, attempt, MAX_RETRIES, wait,
+                        )
+                        await asyncio.sleep(wait)
+                    else:
+                        logger.warning("HTTP %d on %s — skipping", resp.status_code, url)
+                        return None
+            except (httpx.TimeoutException, httpx.RequestError) as exc:
+                wait = 2 ** attempt
+                logger.warning("Request error on %s (%s) — retry %d/%d in %ds", url, exc, attempt, MAX_RETRIES, wait)
+                await asyncio.sleep(wait)
+        logger.error("All %d retries failed for %s", MAX_RETRIES, url)
+        return None
 
-    def _domain(self, url: str) -> str:
-        """Extract domain from URL."""
-        from urllib.parse import urlparse
-        return urlparse(url).netloc
+    # ------------------------------------------------------------------
+    # Helpers
+    # ------------------------------------------------------------------
 
     async def _throttle(self, domain: str) -> None:
-        """Enforce per-domain rate limiting with random jitter (0.5–1.5s)."""
+        """Enforce per-domain rate limiting with random jitter."""
         now = time.monotonic()
-        last = self._domain_last_request.get(domain, 0)
-        wait_time = self.rate_limit + random.uniform(0.5, 1.5)
-        if (elapsed := now - last) < wait_time:
-            await asyncio.sleep(wait_time - elapsed)
-        self._domain_last_request[domain] = time.monotonic()
+        last = self._domain_last_req.get(domain, 0)
+        wait = RATE_LIMIT + random.uniform(*JITTER)
+        elapsed = now - last
+        if elapsed < wait:
+            await asyncio.sleep(wait - elapsed)
+        self._domain_last_req[domain] = time.monotonic()
 
     def _is_allowed(self, url: str) -> bool:
-        """Check robots.txt compliance. Returns True if scraping is allowed."""
-        raise NotImplementedError
+        """
+        Check robots.txt for the given URL.
+        Returns True (allowed) if robots.txt is unreachable or doesn't restrict us.
+        """
+        domain = _domain(url)
+        if domain not in _robots_cache:
+            rp = RobotFileParser()
+            robots_url = f"https://{domain}/robots.txt"
+            rp.set_url(robots_url)
+            try:
+                rp.read()
+            except Exception:
+                # If robots.txt is unreachable, assume allowed
+                pass
+            _robots_cache[domain] = rp
+        return _robots_cache[domain].can_fetch("*", url)
+
+
+# ------------------------------------------------------------------
+# Utilities
+# ------------------------------------------------------------------
+
+def _domain(url: str) -> str:
+    """Extract netloc (domain) from a URL."""
+    return urlparse(url).netloc
+
+
+def url_to_slug(url: str) -> str:
+    """Convert a URL to a filesystem-safe slug."""
+    parsed = urlparse(url)
+    path_slug = parsed.path.strip("/").replace("/", "_").replace("-", "_")
+    # Use a short hash suffix to guarantee uniqueness
+    short_hash = hashlib.md5(url.encode()).hexdigest()[:6]
+    base = f"{parsed.netloc.replace('.', '_')}__{path_slug}"[:80]
+    return f"{base}__{short_hash}"

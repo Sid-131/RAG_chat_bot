@@ -11,9 +11,11 @@ Template types:
 
 REFUSALS = {
     "ADVISORY": (
-        "I'm not able to provide investment recommendations or financial advice. "
-        "For personalised guidance, please consult a SEBI-registered investment advisor. "
-        "I can help you with factual information about any specific mutual fund scheme."
+        "I can only provide factual information about mutual funds. I cannot give investment advice. "
+        "For personalised guidance or portfolio building, please refer to educational resources from:\n\n"
+        "- [SEBI Investor Website](https://investor.sebi.gov.in/)\n"
+        "- [AMFI Investor Corner](https://www.amfiindia.com/investor-corner)\n"
+        "- [Groww Help Center](https://groww.in/help)"
     ),
     "OUT_OF_DOMAIN": (
         "I can only answer factual questions about mutual fund schemes on Groww, "

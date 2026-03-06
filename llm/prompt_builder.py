@@ -2,45 +2,53 @@
 prompt_builder.py
 -----------------
 Constructs the full prompt for the Gemini LLM, including the system rules,
-context block, source URLs, and user query.
+context block, and user query.
 
 System Rules enforced via prompt:
-  1. Answer ONLY from the provided CONTEXT
-  2. Maximum 3 sentences per answer
-  3. End every answer with exactly one source link
-  4. No financial advice or return comparisons
-  5. If context is insufficient, return the 'no information' fallback message
+  - Answer ONLY from the provided CONTEXT
+  - Maximum 3 sentences per answer
+  - Include exactly one citation link
+  - No financial advice or return comparisons
+  - If context is insufficient, return a standard fallback message
 """
 
 from typing import List
 
-SYSTEM_RULES = """You are a factual assistant for Groww's mutual fund information service.
+SYSTEM_RULES = """You are a factual, professional assistant for a mutual fund information service.
+Your task is to answer the user's question using ONLY the information provided in the CONTEXT block below.
 
-Rules you must follow absolutely:
-1. Answer ONLY using information from the CONTEXT provided. Do not use prior knowledge.
-2. Your answer must be a maximum of 3 sentences.
-3. End every answer with exactly one source link from the SOURCES list.
-4. Do not provide financial advice, investment recommendations, or return comparisons.
-5. If the context does not contain the answer, say: "I don't have that information. \
-Please check the AMC's official website or Groww Help Center."
-6. Do not speculate or infer beyond what the context states.
-"""
+Strict Rules:
+1. FACTUAL ONLY: Answer strictly using facts from the CONTEXT. Do not use your prior knowledge.
+2. LENGTH: Keep your answer concise. It MUST be a maximum of 3 sentences.
+3. ADVICE: Do not provide financial advice, investment recommendations, or predict future returns.
+4. CITATION: You MUST include exactly one citation link at the end of your answer in this format:
+   Source: <URL>
+   Choose the most relevant URL from the CONTEXT block.
+5. NO HALLUCINATION: If the context does not contain enough information to factualy answer the question, you MUST respond EXACTLY with this phrase and nothing else:
+   "The information is not available in the provided official sources."
+
+--- CONTEXT ---
+{context_block}
+
+--- USER QUESTION ---
+{query}
+
+Answer:"""
 
 
-# ---------------------------------------------------------------------------
-# TODO: Implement prompt builder
-# ---------------------------------------------------------------------------
-
-def build_prompt(query: str, context_block: str, source_urls: List[str]) -> str:
+def build_prompt(query: str, context_block: str, source_urls: List[str] = None) -> str:
     """
     Construct the full prompt string.
 
     Args:
         query:         User's factual question
-        context_block: Concatenated retrieved chunk texts
-        source_urls:   List of source URLs from retrieved chunks
+        context_block: Concatenated retrieved chunk texts (numbered with URLs)
+        source_urls:   (Optional) List of source URLs. Handled mostly in context_block now.
 
     Returns:
         Complete prompt string ready for Gemini API
     """
-    raise NotImplementedError
+    return SYSTEM_RULES.format(
+        context_block=context_block if context_block.strip() else "No relevant context found.",
+        query=query
+    )
