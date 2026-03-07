@@ -99,26 +99,21 @@ def startup_event():
         logger.info("Vercel Ephemeral DB is empty. Populating from local data/chunks/...")
         try:
             import json
-            import glob
-            from embeddings.generate import embed_texts
-            
-            chunk_files = glob.glob("data/chunks/*.json")
-            for fpath in chunk_files:
-                with open(fpath, "r", encoding="utf-8") as f:
+            dump_path = "data/vercel_dump.json"
+            if os.path.exists(dump_path):
+                logger.info("Found vercel_dump.json. Injecting pre-calculated embeddings into memory...")
+                with open(dump_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                    
-                chunks = data.get("chunks", [])
-                if not chunks: continue
                 
-                texts = [c["text"] for c in chunks]
-                ids = [c["metadata"]["chunk_id"] for c in chunks]
-                metadatas = [c["metadata"] for c in chunks]
-                
-                # We need the API key to generate vectors on the fly
-                if API_KEY:
-                    logger.info(f"Generating vectors for {len(chunks)} chunks in {fpath}...")
-                    vectors = embed_texts(texts, API_KEY)
-                    vi.add(chunk_ids=ids, texts=texts, embeddings=vectors, metadatas=metadatas)
+                vi.add(
+                    chunk_ids=data["ids"],
+                    texts=data["texts"],
+                    embeddings=__import__("numpy").array(data["embeddings"], dtype=__import__("numpy").float32),
+                    metadatas=data["metadatas"]
+                )
+                logger.info(f"Successfully injected {len(data['ids'])} vectors from JSON dump.")
+            else:
+                logger.warning("vercel_dump.json not found! Ephemeral DB will be empty.")
         except Exception as e:
             logger.error(f"Failed to populate ephemeral DB on startup: {e}")
             
